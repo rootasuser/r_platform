@@ -14,9 +14,13 @@ $userModel = new User();
 $user = $userModel->getUserById($_SESSION['user_id']);
 
 if (!$user || isset($user['error'])) {
-    echo "<p>User not found or an error occurred.</p>";
+    echo "<p>User not found.</p>";
     exit();
 }
+function blobToBase64($blob) {
+    return base64_encode($blob);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,427 +29,13 @@ if (!$user || isset($user['error'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <title>facebook.com</title>
+    <title>R Connect</title>
     <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Custom CSS -->
-    <style>
-        :root {
-            --background: #d1deec;
-            --foreground: #f1f3f5;
-            --white: #fff;
-            --black: #000;
-            --gray: #6e6e6e;
-            --shadow: #76767663;
-            --border: #cfcfcf;
-        }
-
-        .dark-color {
-            --background: #222230;
-            --foreground: #42435c;
-            --white: #2b2c44;
-            --black: #eeecff;
-            --gray: #d5dfd5;
-            --shadow: #00000063;
-            --border: #3f4172;
-        }
-
-        body {
-            background: var(--background);
-        }
-
-        .header-container {
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 2px 5px 0 var(--shadow);
-        }
-
-        .searchBox input {
-            background: var(--foreground);
-            box-shadow: 0 2px 5px 0 var(--shadow);
-        }
-
-        .iconBox1 i,
-        .iconBox2 i {
-            color: #769bcb;
-        }
-
-        .iconBox1 i:hover,
-        .iconBox2 i:hover {
-            background: #1877f2;
-            color: #d1deec;
-        }
-
-        .darkTheme.button-Active span {
-            margin-left: 16px;
-        }
-
-        .single-stories {
-            position: relative;
-            padding-top: 25px;
-        }
-
-        .single-stories label {
-            width: 45px;
-            height: 45px;
-            background: #daeaff;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 0;
-            border-radius: 50px;
-            overflow: hidden;
-            border: 3px solid #1877f2;
-        }
-
-        .single-stories > div {
-            width: 100%;
-            overflow: hidden;
-            height: 100%;
-            border-radius: 18px;
-            text-align: center;
-            box-shadow: 1px 6px 6px 0 var(--shadow);
-        }
-
-        .single-stories > div img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .single-stories > div b {
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: white;
-            font-weight: 400;
-            text-shadow: 0 1px 8px black;
-        }
-
-        .single-stories > div i {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 25px;
-            color: white;
-        }
-
-        .post-text img {
-            width: 40px;
-            border-radius: 50px;
-            position: absolute;
-            left: 10px;
-            top: 30px;
-        }
-
-        .post-text input {
-            padding: 20px 20px 20px 60px;
-            width: 100%;
-            background: var(--foreground);
-            border: none;
-            height: 100px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px 0 var(--shadow);
-        }
-
-        .post-icon a {
-            margin-right: 10px;
-            padding: 5px;
-            border-radius: 10px;
-            font-size: 14px;
-            color: #262626;
-            font-weight: 500;
-        }
-
-        .post-icon a i {
-            padding: 5px;
-            border-radius: 5px;
-            color: #fff;
-        }
-
-        .fb-post1-header ul li {
-            text-transform: uppercase;
-            padding: 5px 10px;
-            font-weight: 600;
-            color: var(--gray);
-            cursor: pointer;
-        }
-
-        .fb-post1-header .active {
-            color: var(--black);
-            border-bottom: 3px solid #1877f2;
-        }
-
-        .post-title img {
-            width: 50px;
-            border-radius: 50px;
-            margin-right: 20px;
-            margin-bottom: 20px;
-        }
-
-        .post-title ul li span {
-            color: var(--gray);
-            font-weight: 400;
-            font-size: 14px;
-        }
-
-        .post-images1 img:nth-child(1) {
-            width: 100%;
-            margin-bottom: 10px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 15px;
-        }
-
-        .post-images1 img:nth-child(2),
-        .post-images1 img:nth-child(3) {
-            width: 47%;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 15px;
-        }
-
-        .post-images2 img {
-            width: 100%;
-            height: 335px;
-            border-radius: 15px;
-            object-fit: cover;
-        }
-
-        .like-comment ul li {
-            margin-right: 20px;
-        }
-
-        .like-comment ul li img {
-            width: 20px;
-            margin-right: -5px;
-        }
-
-        .like-comment ul li i {
-            color: #9d9d9d;
-        }
-
-        .like-comment ul li span {
-            color: var(--gray);
-            margin-left: 10px;
-            font-size: 14px;
-        }
-
-        .event img {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 18px;
-        }
-
-        .event-date h3 {
-            color: #1877f2;
-            text-align: center;
-            line-height: 20px;
-            margin-right: 10px;
-            background: var(--white);
-            padding: 6px;
-            box-shadow: 0 2px 5px 0 var(--shadow);
-            border-radius: 6px;
-        }
-
-        .event-date h3 b {
-            color: var(--black);
-            display: block;
-            text-transform: uppercase;
-        }
-
-        .event-date h4 {
-            color: var(--black);
-            font-size: 14px;
-        }
-
-        .event-date h4 span {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--gray);
-        }
-
-        .event button {
-            padding: 6px;
-            background: #1877f2;
-            color: white;
-            border-radius: 6px;
-            border: none;
-            margin-bottom: 18px;
-        }
-
-        .event button:hover {
-            background: #115cbd;
-            cursor: pointer;
-        }
-
-        .event button i {
-            margin-right: 6px;
-        }
-
-        .friend ul li img {
-            width: 50px;
-            border-radius: 50px;
-            margin-right: 10px;
-        }
-
-        .friend ul li b {
-            color: var(--black);
-            cursor: pointer;
-            text-transform: capitalize;
-        }
-
-        .friend ul li p {
-            font-size: 12px;
-            display: block;
-            margin-bottom: 10px;
-            color: var(--gray);
-        }
-
-        .friend ul li button {
-            background: #1877f2;
-            border: none;
-            padding: 3px 10px;
-            color: white;
-            border-radius: 5px;
-            margin-right: 5px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .friend-remove {
-            background: var(--background) !important;
-            color: var(--black) !important;
-        }
-
-        .create-page ul li .fa-circle-plus {
-            color: white;
-            padding: 10px;
-            background: #1877f2;
-            border-radius: 10px;
-            font-size: 20px;
-            margin-right: 8px;
-            cursor: pointer;
-        }
-
-        .create-page ul li h4 {
-            font-size: 14px;
-            color: var(--black);
-            margin-right: 95px;
-        }
-
-        .create-page ul li i {
-            color: var(--gray);
-        }
-
-        .create-page ul li img {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        .create-page ul li b {
-            font-size: 12px;
-        }
-
-        .create-page ul li button {
-            font-size: 12px;
-            border: none;
-            padding: 3px 10px;
-            background: #1877f2;
-            color: white;
-            border-radius: 50px;
-            cursor: pointer;
-        }
-
-        .create-page ul li:nth-child(3) {
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .create-page ul li b span {
-            display: block;
-            font-weight: 500;
-            color: var(--gray);
-        }
-
-        .messenger ul li {
-            display: flex;
-            width: 100%;
-            margin-bottom: 10px;
-            overflow: hidden;
-            align-items: center;
-            background: var(--foreground);
-            padding: 10px 5px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px 0 var(--shadow);
-            position: relative;
-            transition: .4s;
-        }
-
-        .messenger ul li img {
-            width: 42px;
-            border-radius: 50px;
-            margin-right: 10px;
-        }
-
-        .messenger ul li:hover {
-            box-shadow: 0 4px 6px 0 var(--shadow);
-        }
-
-        .messenger ul li b {
-            color: var(--black);
-            font-size: 14px;
-        }
-
-        .messenger ul li b span {
-            display: block;
-            color: var(--gray);
-            font-size: 10px;
-            position: relative;
-            margin-left: 15px;
-        }
-
-        .messenger ul li span::before {
-            content: '';
-            display: block;
-            width: 7px;
-            height: 7px;
-            background: #12da01;
-            position: absolute;
-            border-radius: 50px;
-            top: 4px;
-            left: -12px;
-        }
-
-        .messenger ul li:nth-child(2) span::before {
-            background: #ff9600;
-        }
-
-        .messenger ul li i {
-            color: #1877f2;
-            position: absolute;
-            right: 12px;
-            top: 35%;
-            background: white;
-            padding: 5px;
-            border-radius: 50px;
-            box-shadow: 0 2px 5px #95959561;
-        }
-
-        .messenger-search .fa-magnifying-glass {
-            position: absolute;
-            right: 6px;
-            font-size: 12px;
-            color: var(--black);
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/style.dashboard.css">
 </head>
 <body>
     <!-- header section start -->
@@ -453,17 +43,26 @@ if (!$user || isset($user['error'])) {
         <div class="container">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="logoBox">
-                    <img src="images/facebook-logo.png" alt="logo">
+                    <a href="dashboard.php">
+                    <img src="" alt="logo">
+                    </a>
                 </div>
                 <div class="searchBox d-flex align-items-center">
-                    <input type="search" class="form-control rounded-pill" placeholder="Search Facebook">
+                    <input type="search" class="form-control rounded-pill" placeholder="Search R Connect">
                     <i class="fas fa-search ml-2"></i>
                 </div>
                 <div class="iconBox1 d-flex">
+                    <a href="dashboard.php">
                     <i class="fa-solid fa-house mx-3"></i>
+                    </a>
+                    <a href="people.php">
                     <i class="fa-solid fa-user-group mx-3"></i>
+                    </a>
+                    
+                    <a href="videos.php">
                     <i class="fa-solid fa-video mx-3"></i>
-                    <i class="fa-solid fa-gamepad mx-3"></i>
+                    </a>
+                 
                 </div>
                 <div class="iconBox2 d-flex align-items-center">
                     <i class="fa-solid fa-circle-plus mx-3"></i>
@@ -471,7 +70,7 @@ if (!$user || isset($user['error'])) {
                     <i class="fa-solid fa-bell mx-3"></i>
                     <div class="dropdown">
                         <div class="dropdown-toggle d-flex align-items-center" data-toggle="dropdown">
-                            <img src="images/user.jpg" alt="user" class="rounded-circle mr-2" width="30">
+                            <img src="data:image/jpeg;base64,<?php echo blobToBase64($user['profile_picture']); ?>" alt="user" class="rounded-circle mr-2" width="30">
                             <span class="d-none d-md-inline"><?= htmlspecialchars($user['first_name']) ?> <?= htmlspecialchars($user['last_name']) ?></span>
                         </div>
                         <div class="dropdown-menu">
@@ -526,47 +125,8 @@ if (!$user || isset($user['error'])) {
                             <button class="btn btn-outline-primary btn-sm btn-block">See more <i class="fa-solid fa-angle-down ml-2"></i></button>
                         </div>
 
-                        <div class="games mb-4">
-                            <h4 class="mini-headign text-uppercase mb-3">Games</h4>
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="images/game.png" alt="game01" class="mr-2" width="30">
-                                <span>Facebook games</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="images/game2.png" alt="game02" class="mr-2" width="30">
-                                <span>Free Play Games</span>
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm btn-block">See more <i class="fa-solid fa-angle-down ml-2"></i></button>
-                        </div>
-
-                        <div class="explore">
-                            <h4 class="mini-headign text-uppercase mb-3">Explore</h4>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fa-solid fa-user-group mr-2"></i>
-                                <span>Group</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fa-solid fa-star mr-2"></i>
-                                <span>Favorites</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fa-solid fa-bookmark mr-2"></i>
-                                <span>Saves</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fa-solid fa-clock mr-2"></i>
-                                <span>Events</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="fa-solid fa-flag mr-2"></i>
-                                <span>Pages</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <label class="darkTheme mr-2"><span></span></label>
-                                <span>Apply Dark Theme</span>
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm btn-block">See more <i class="fa-solid fa-angle-down ml-2"></i></button>
-                        </div>
+                      
+                       
                     </div>
                 </div>
             </div>
@@ -730,27 +290,7 @@ if (!$user || isset($user['error'])) {
             <div class="col-md-3">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="event mb-4">
-                            <h3 class="heading mb-3 d-flex justify-content-between">
-                                Upcoming Events
-                                <small class="text-muted"><a href="#" class="text-decoration-none">see all</a></small>
-                            </h3>
-                            <img src="images/eve.jpg" alt="event-img" class="mb-3 rounded w-100">
-                            <div class="event-date d-flex mb-3">
-                                <h3 class="text-center mr-3">
-                                    21 <br>
-                                    <small class="font-weight-bold">july</small>
-                                </h3>
-                                <div>
-                                    <h4 class="mb-0">United state of America</h4>
-                                    <small class="text-muted">New York City</small>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary btn-block">
-                                <i class="fa-regular fa-star mr-2"></i> Interested
-                            </button>
-                        </div>
-                        <hr>
+                      
                         <div class="friend mb-4">
                             <h3 class="heading mb-3 d-flex justify-content-between">
                                 Friend Requests
@@ -773,31 +313,7 @@ if (!$user || isset($user['error'])) {
                     </div>
                 </div>
 
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="create-page mb-4">
-                            <ul class="list-unstyled">
-                                <li class="d-flex align-items-center mb-3">
-                                    <i class="fa-solid fa-circle-plus text-primary mr-3" style="font-size: 20px;"></i>
-                                    <div class="flex-grow-1">
-                                        <h4 class="mb-0">Create Page & Groups</h4>
-                                    </div>
-                                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                                </li>
-                                <li class="mb-3">
-                                    <img src="images/group.jpg" alt="groups" class="rounded w-100">
-                                </li>
-                                <li class="d-flex justify-content-between">
-                                    <div>
-                                        <h5 class="mb-0">simple group or page name</h5>
-                                        <small class="text-muted">200k Members</small>
-                                    </div>
-                                    <button class="btn btn-primary">Join Group</button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+              
 
                 <div class="card">
                     <div class="card-body">

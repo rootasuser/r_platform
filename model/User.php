@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/Database.php';
+
 class User {
     private $conn;
 
@@ -91,57 +92,55 @@ class User {
     public function getUserById($id) {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+    
             if (!$stmt) {
                 throw new Exception("DB Err: " . $this->conn->error);
             }
     
             $stmt->bind_param("i", $id);
             $stmt->execute();
+    
             $result = $stmt->get_result();
     
             if ($result->num_rows === 1) {
-                return $result->fetch_assoc();
+                $user = $result->fetch_assoc();
+    
+                $user['profile_picture'] = $user['profile_picture'];  
+                $user['cover_photo'] = $user['cover_photo'];  
+                
+                return $user;
             } else {
-                return null; 
+                return null;
             }
         } catch (Exception $e) {
-            return ["error" => "Failed to fetch user: " . $e->getMessage()];
+            return ["error" => "Failed to fetch user: " . $e->getMessage()]; 
         }
     }
     
-    /**
-     * UPDATE USER PROFILE
-     */
-    public function updateProfile($userId, $firstName, $lastName, $contact, $email, $password, $status, $profilePicture) {
-        $query = "UPDATE users SET first_name = ?, last_name = ?, contact = ?, email = ?, status = ?";
-
-        if ($password) {
-            $query .= ", password = ?";
-        }
-
-        if ($profilePicture) {
-            $query .= ", profile_picture = ?";
-        }
-
-        $query .= " WHERE id = ?";
-
-        $stmt = $this->conn->prepare($query);
-
-        if ($password && $profilePicture) {
-            $stmt->bind_param("ssssssi", $firstName, $lastName, $contact, $email, $status, $password, $profilePicture, $userId);
-        } elseif ($password) {
-            $stmt->bind_param("sssssi", $firstName, $lastName, $contact, $email, $status, $password, $userId);
-        } elseif ($profilePicture) {
-            $stmt->bind_param("sssssi", $firstName, $lastName, $contact, $email, $status, $profilePicture, $userId);
-        } else {
-            $stmt->bind_param("sssssi", $firstName, $lastName, $contact, $email, $status, $userId);
-        }
-
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+    
+    
+ /**
+ * UPDATE OR INSERT USER PROFILE
+ */
+public function updateOrInsertProfile($userId, $firstName, $lastName, $contactNumber, $email, $password, $profilePictureBlob, $coverPhotoBlob) {
+    $query = "UPDATE users SET 
+                 first_name = ?, 
+                 last_name = ?, 
+                 contact_number = ?, 
+                 email = ?, 
+                 password = ?, 
+                 profile_picture = ?, 
+                 cover_photo = ?, 
+                 updated_at = CURRENT_TIMESTAMP 
+               WHERE id = ?";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param('sssssssi', $firstName, $lastName, $contactNumber, $email, $password, $profilePictureBlob, $coverPhotoBlob, $userId);
+    
+    return $stmt->execute();
+    
     }
+
+
     
 }
