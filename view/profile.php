@@ -23,9 +23,6 @@ function blobToBase64($blob) {
     return base64_encode($blob);
 }
 
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,48 +39,7 @@ function blobToBase64($blob) {
 <body>
   
 
-    <!-- Header Section -->
-    <header class="bg-white p-3 shadow-sm">
-        <div class="container">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="logoBox">
-                    <a href="dashboard.php">
-                        <img src="images/facebook-logo.png" alt="logo">
-                    </a>
-                </div>
-                <div class="searchBox d-flex align-items-center">
-                    <input type="search" class="form-control rounded-pill" placeholder="Search R Connect">
-                    <i class="fas fa-search ms-2"></i>
-                </div>
-                <div class="iconBox1 d-flex">
-                    <a href="dashboard.php">
-                        <i class="fa-solid fa-house mx-3"></i>
-                    </a>
-                    <a href="people.php">
-                        <i class="fa-solid fa-user-group mx-3"></i>
-                    </a>
-                    <a href="videos.php">
-                        <i class="fa-solid fa-video mx-3"></i>
-                    </a>
-                </div>
-                <div class="iconBox2 d-flex align-items-center">
-                    <i class="fa-solid fa-circle-plus mx-3"></i>
-                    <i class="fa-brands fa-facebook-messenger mx-3"></i>
-                    <i class="fa-solid fa-bell mx-3"></i>
-                    <div class="dropdown">
-                        <div class="dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-                            <img src="data:image/jpeg;base64,<?php echo blobToBase64($user['profile_picture']); ?>" alt="user" class="rounded-circle me-2" width="30">
-                            <span class="d-none d-md-inline"><?= htmlspecialchars($user['first_name']) ?> <?= htmlspecialchars($user['last_name']) ?></span>
-                        </div>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="profile.php">View Profile</a>
-                            <a class="dropdown-item" href="logout.php">Logout</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+<?php include('header.php'); ?>
 
     <!-- Profile Section -->
     <div class="container mt-4">
@@ -103,7 +59,7 @@ function blobToBase64($blob) {
                             <input type="file" name="profile_picture" id="profilePictureInput" accept="image/*" style="display:none;" onchange="this.form.submit();">
                         </form>
                         <div class="ms-3">
-                            <h1 class="profile-name"><?= htmlspecialchars($user['first_name']) ?> <?= htmlspecialchars($user['last_name']) ?></h1>
+                            <h1 class="profile-name text-white"><?= htmlspecialchars($user['first_name']) ?> <?= htmlspecialchars($user['last_name']) ?></h1>
                             <div class="profile-stats">
                                 <span>3.4K followers</span> · <span>456 Friends</span>
                             </div>
@@ -133,7 +89,6 @@ function blobToBase64($blob) {
             </div>
         </div>
 
-        <!-- Profile Content -->
         <div class="row">
         <?php
             $allowedPages = ['profile', 'account'];
@@ -144,10 +99,9 @@ function blobToBase64($blob) {
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Display success or error messages if available
+
         window.addEventListener('load', function() {
             <?php if (isset($_SESSION['message'])): ?>
                 showToast("<?= htmlspecialchars($_SESSION['message']) ?>");

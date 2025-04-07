@@ -17,10 +17,10 @@ if (!$user || isset($user['error'])) {
     echo "<p>User not found.</p>";
     exit();
 }
+
 function blobToBase64($blob) {
     return base64_encode($blob);
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,58 +31,14 @@ function blobToBase64($blob) {
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <title>R Connect</title>
     <!-- Bootstrap 4 CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/style.dashboard.css">
 </head>
 <body>
-    <!-- header section start -->
-    <header class="bg-white p-3 shadow-sm">
-        <div class="container">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="logoBox">
-                    <a href="dashboard.php">
-                    <img src="" alt="logo">
-                    </a>
-                </div>
-                <div class="searchBox d-flex align-items-center">
-                    <input type="search" class="form-control rounded-pill" placeholder="Search R Connect">
-                    <i class="fas fa-search ml-2"></i>
-                </div>
-                <div class="iconBox1 d-flex">
-                    <a href="dashboard.php">
-                    <i class="fa-solid fa-house mx-3"></i>
-                    </a>
-                    <a href="people.php">
-                    <i class="fa-solid fa-user-group mx-3"></i>
-                    </a>
-                    
-                    <a href="videos.php">
-                    <i class="fa-solid fa-video mx-3"></i>
-                    </a>
-                 
-                </div>
-                <div class="iconBox2 d-flex align-items-center">
-                    <i class="fa-solid fa-circle-plus mx-3"></i>
-                    <i class="fa-brands fa-facebook-messenger mx-3"></i>
-                    <i class="fa-solid fa-bell mx-3"></i>
-                    <div class="dropdown">
-                        <div class="dropdown-toggle d-flex align-items-center" data-toggle="dropdown">
-                            <img src="data:image/jpeg;base64,<?php echo blobToBase64($user['profile_picture']); ?>" alt="user" class="rounded-circle mr-2" width="30">
-                            <span class="d-none d-md-inline"><?= htmlspecialchars($user['first_name']) ?> <?= htmlspecialchars($user['last_name']) ?></span>
-                        </div>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="profile.php">View Profile</a>
-                            <a class="dropdown-item" href="logout.php">Logout</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
+    <?php include('header.php'); ?>
     <!-- home section start -->
     <div class="container mt-4">
         <div class="row">
@@ -124,9 +80,6 @@ function blobToBase64($blob) {
                             </div>
                             <button class="btn btn-outline-primary btn-sm btn-block">See more <i class="fa-solid fa-angle-down ml-2"></i></button>
                         </div>
-
-                      
-                       
                     </div>
                 </div>
             </div>
@@ -190,7 +143,7 @@ function blobToBase64($blob) {
                         <div class="createPost mb-4">
                             <h3 class="mini-headign text-uppercase mb-3">Create Post</h3>
                             <div class="post-text position-relative mb-4">
-                                <img src="images/user.jpg" alt="user" class="rounded-circle position-absolute left-0 top-0 mt-3 ml-3" width="40">
+                                <img src="data:image/jpeg;base64,<?php echo blobToBase64($user['profile_picture']); ?>" alt="user" class="rounded-circle position-absolute left-0 top-0 mt-3 ml-3" width="40">
                                 <input type="text" class="form-control" placeholder="What's on your mind, <?= htmlspecialchars($user['first_name']) ?>">
                             </div>
 
@@ -213,7 +166,7 @@ function blobToBase64($blob) {
                                 </a>
                                 <a href="#" class="bg-light p-2" style="background: #fff4d1;">
                                     <i class="fa-solid fa-face-grin-beam" style="background: #ffca28; padding: 5px; border-radius: 5px; color: white;"></i>
-                                    <span class="ml-2">Feeling / Acrivity</span>
+                                    <span class="ml-2">Feeling / Activity</span>
                                 </a>
                             </div>
                         </div>
@@ -313,8 +266,6 @@ function blobToBase64($blob) {
                     </div>
                 </div>
 
-              
-
                 <div class="card">
                     <div class="card-body">
                         <div class="messenger">
@@ -355,30 +306,27 @@ function blobToBase64($blob) {
                 </div>
             </div>
         </div>
-
-
-      
     </div>
 
     <!-- Bootstrap 4 JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="../assets/node_modules/jquery/dist/jquery.slim.min.js"></script>
+    <script src="../assets/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+    <script src="../assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <script>
-        //   <?php
-        //     $page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_SPECIAL_CHARS) ?: 'analytics';
-        //     $allowedPages = ['analytics', 'research_title', 'documents', 'search_and_filter', 'reports', 'logs', 'users', 'account'];
-        //     if (!in_array($page, $allowedPages, true)) { $page = '404'; }
-        //     $viewFile = __DIR__ . '/templates/' . $page . '.php';
-        //     if (is_readable($viewFile)) { include $viewFile; } else { http_response_code(404); echo '<h2>404 - Page Not Found</h2>'; }
-        // ?>
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     var darkButton = document.querySelector(".darkTheme");
+        //     if (darkButton) {
+        //         darkButton.onclick = function() {
+        //             darkButton.classList.toggle("button-Active");
+        //             document.body.classList.toggle("dark-color");
+        //         };
+        //     } else {
+        //         console.error("Element with class 'darkTheme' not found.");
+        //     }
+        // });
 
-        var darkButton = document.querySelector(".darkTheme");
-        darkButton.onclick = function() {
-            darkButton.classList.toggle("button-Active");
-            document.body.classList.toggle("dark-color");
-        };
+        
     </script>
 </body>
 </html>

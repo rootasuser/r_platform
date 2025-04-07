@@ -3,7 +3,7 @@ class Database {
     private $host = "localhost";
     private $username = "root";
     private $password = "";
-    private $database = "r_platform";
+    private $database = "r_platform_db";
     private $conn;
 
     public function getConnection() {

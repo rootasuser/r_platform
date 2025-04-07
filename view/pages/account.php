@@ -2,20 +2,24 @@
 require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../../model/User.php';
 
+// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Redirect to login if user is not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../public/login.php");
     exit();
 }
 
+// Initialize user model and get user data
 $userModel = new User();
 $user = $userModel->getUserById($_SESSION['user_id']);
 
 if (!$user) {
-    $_SESSION['error'] = "<p>User not found.</p>";
+    $_SESSION['error'] = "User not found.";
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -23,132 +27,147 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) 
     handleProfileUpdate();
 }
 
+
 function handleProfileUpdate() {
-    $userModel = new User();
+    global $userModel;
+    
     $userId = $_SESSION['user_id'];
+    $firstName = trim($_POST['first_name'] ?? '');
+    $lastName = trim($_POST['last_name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $contactNumber = trim($_POST['contact_number'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $confirmPassword = trim($_POST['confirm_password'] ?? '');
     
-    $firstName = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
-    $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $contactNumber = isset($_POST['contact_number']) ? trim($_POST['contact_number']) : '';
-    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
-    $confirmPassword = isset($_POST['confirm_password']) ? trim($_POST['confirm_password']) : '';
-    
-    // Validate input
     if (empty($firstName) || empty($lastName) || empty($email) || empty($contactNumber)) {
-        $_SESSION['message'] = "All fields are required.";
+        setMessage("All fields are required.");
         return;
     }
     
+
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['message'] = "Invalid email format.";
+        setMessage("Invalid email format.");
         return;
     }
     
     if (!empty($password) && $password !== $confirmPassword) {
-        $_SESSION['message'] = "Passwords do not match.";
+        setMessage("Passwords do not match.");
         return;
     }
     
-    // Hash password if provided
-    if (!empty($password)) {
-        $password = password_hash($password, PASSWORD_DEFAULT);
-    }
+    $hashedPassword = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : null;
 
-    // Handle profile picture upload
-    $profilePictureBlob = null;
-    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-        $profilePictureBlob = handleBlobFileUpload($_FILES['profile_picture']);
-        if ($profilePictureBlob === false) {
-            $_SESSION['message'] = "Error uploading profile picture.";
-            return;
-        }
-    }
-
-    // Handle cover photo upload
-    $coverPhotoBlob = null;
-    if (isset($_FILES['cover_photo']) && $_FILES['cover_photo']['error'] === UPLOAD_ERR_OK) {
-        $coverPhotoBlob = handleBlobFileUpload($_FILES['cover_photo']);
-        if ($coverPhotoBlob === false) {
-            $_SESSION['message'] = "Error uploading cover photo.";
-            return;
-        }
+    $profilePictureBlob = handleFileUpload($_FILES['profile_picture'] ?? null);
+    if ($profilePictureBlob === false) {
+        return;
     }
     
-    // Retrieve existing images if no new images are uploaded
+    $coverPhotoBlob = handleFileUpload($_FILES['cover_photo'] ?? null);
+    if ($coverPhotoBlob === false) {
+        return;
+    }
+    
+
     $existingUser = $userModel->getUserById($userId);
+    if (!$existingUser) {
+        setMessage("User not found.");
+        return;
+    }
     $profilePictureBlob = $profilePictureBlob ?? $existingUser['profile_picture'];
     $coverPhotoBlob = $coverPhotoBlob ?? $existingUser['cover_photo'];
     
-    // Update the user profile
     $updateSuccess = $userModel->updateOrInsertProfile(
-        $userId, 
-        $firstName, 
-        $lastName, 
-        $contactNumber, 
-        $email, 
-        $password, 
-        $profilePictureBlob, 
+        $userId,
+        $firstName,
+        $lastName,
+        $contactNumber,
+        $email,
+        $hashedPassword,
+        $profilePictureBlob,
         $coverPhotoBlob
     );
     
     if ($updateSuccess) {
-        $_SESSION['message'] = "Profile updated successfully!";
+        setMessage("Profile updated successfully!");
     } else {
-        $_SESSION['message'] = "There was an error updating your profile.";
+        setMessage("There was an error updating your profile.");
     }
 }
 
-function handleBlobFileUpload($file) {
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    $fileType = mime_content_type($file['tmp_name']);
-    
-    // Validate the file type
-    if (!in_array($fileType, $allowedTypes)) {
-        $_SESSION['message'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-        return false;
+/**
+ * Handles file upload and returns BLOB data
+ * 
+ * @param array|null $file File data from $_FILES
+ * @return string|null BLOB data or null if no file uploaded
+ */
+function handleFileUpload($file) {
+    if (isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $fileType = mime_content_type($file['tmp_name']);
+        
+        if (!in_array($fileType, $allowedTypes)) {
+            setMessage("Only JPG, JPEG, PNG & GIF files are allowed.");
+            return false;
+        }
+        
+        if ($file['size'] > 5000000) {
+            setMessage("File is too large (max 5MB).");
+            return false;
+        }
+        
+        $fileBlob = file_get_contents($file['tmp_name']);
+        if ($fileBlob === false) {
+            setMessage("Error reading file.");
+            return false;
+        }
+        
+        return $fileBlob;
     }
     
-    // Validate file size (max 5MB)
-    if ($file['size'] > 5000000) {
-        $_SESSION['message'] = "Sorry, your file is too large.";
-        return false;
-    }
-    
-    // Read the file contents as binary data (BLOB)
-    $fileBlob = file_get_contents($file['tmp_name']);
-    if ($fileBlob === false) {
-        $_SESSION['message'] = "Sorry, there was an error reading your file.";
-        return false;
-    }
-    
-    return $fileBlob;
+    return null;
+}
+
+/**
+ * Sets a message in the session
+ * 
+ * @param string $message Message to set
+ */
+function setMessage($message) {
+    $_SESSION['message'] = $message;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R Connect - Account</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.account.css">
+    <title>Account Settings</title>
+    
 </head>
 <body>
-    <!-- Account Section -->
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card border-0">
                     <div class="card-header">
                         <h3>Account Settings</h3>
                     </div>
                     <div class="card-body">
                         <form id="accountForm" action="" method="POST" enctype="multipart/form-data">
-                            <div class="row mb-3">
+                            <!-- Display messages -->
+                            <?php if (isset($_SESSION['message'])): ?>
+                                <div class="message-container <?= isset($_SESSION['error']) ? 'error-message' : 'success-message' ?>">
+                                    <?= $_SESSION['message'] ?>
+                                </div>
+                                <?php unset($_SESSION['message']); ?>
+                                <?php unset($_SESSION['error']); ?>
+                            <?php endif; ?>
+                            
+                            <div class="row mb-3 border-0">
                                 <div class="col-md-6">
                                     <label for="first_name" class="form-label">First Name</label>
                                     <input type="text" class="form-control" id="first_name" name="first_name" value="<?= htmlspecialchars($user['first_name']) ?>" required>
@@ -158,31 +177,42 @@ function handleBlobFileUpload($file) {
                                     <input type="text" class="form-control" id="last_name" name="last_name" value="<?= htmlspecialchars($user['last_name']) ?>" required>
                                 </div>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="contact_number" class="form-label">Contact Number</label>
                                 <input type="tel" class="form-control" id="contact_number" name="contact_number" value="<?= htmlspecialchars($user['contact_number']) ?>" required>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Leave blank to keep current password">
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="profile_picture" class="form-label">Profile Picture</label>
-                                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                                <label class="file-label">Profile Picture</label>
+                                <img src="data:image/jpeg;base64,<?= htmlspecialchars(base64_encode($user['profile_picture'])) ?>" alt="Profile Picture" class="profile-preview">
+                                <input type="file" class="file-input" id="profile_picture" name="profile_picture" accept="image/*">
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="cover_photo" class="form-label">Cover Photo</label>
-                                <input type="file" class="form-control" id="cover_photo" name="cover_photo" accept="image/*">
+                                <label class="file-label">Cover Photo</label>
+                                <img src="data:image/jpeg;base64,<?= htmlspecialchars(base64_encode($user['cover_photo'])) ?>" alt="Cover Photo" class="cover-preview">
+                                <input type="file" class="file-input" id="cover_photo" name="cover_photo" accept="image/*">
                             </div>
-                            <button type="submit" name="updateProfileBtn" class="btn btn-primary">Update Profile</button>
+                            <div class="mb-3 d-flex justify-content-end align-items end">
+                            <button type="submit" name="updateProfileBtn" class="btn btn-primary">Update</button>     
+                            </div>
+                           
                         </form>
                     </div>
                 </div>
@@ -190,9 +220,43 @@ function handleBlobFileUpload($file) {
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+    
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profilePictureInput = document.getElementById('profile_picture');
+            const coverPhotoInput = document.getElementById('cover_photo');
+            const profilePreview = document.querySelector('.profile-preview');
+            const coverPreview = document.querySelector('.cover-preview');
+            
+            function previewImage(input, previewElement) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewElement.src = e.target.result;
+                    }
+                    
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            
+            if (profilePictureInput) {
+                profilePictureInput.addEventListener('change', function() {
+                    previewImage(this, profilePreview);
+                });
+            }
+            
+            if (coverPhotoInput) {
+                coverPhotoInput.addEventListener('change', function() {
+                    previewImage(this, coverPreview);
+                });
+            }
+        });
+
         window.addEventListener('load', function() {
             <?php if (isset($_SESSION['message'])): ?>
                 showToast("<?= htmlspecialchars($_SESSION['message']) ?>");
@@ -216,8 +280,6 @@ function handleBlobFileUpload($file) {
                 </div>
             `;
             document.body.appendChild(toast);
-
-            // Auto-remove the toast after 5 seconds
             setTimeout(() => {
                 const toastElement = new bootstrap.Toast(toast);
                 toastElement.hide();
@@ -228,4 +290,4 @@ function handleBlobFileUpload($file) {
         }
     </script>
 </body>
-</html>
+</html>        

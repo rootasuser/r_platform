@@ -69,9 +69,9 @@ class User {
         $stmt->execute();
         $result = $stmt->get_result();
     
-        if ($result->num_rows > 0) {
-            return "Email or contact number already registered.";
-        }
+        // if ($result->num_rows > 0) {
+        //     return "Email or contact number already registered.";
+        // }
     
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     
@@ -116,30 +116,81 @@ class User {
             return ["error" => "Failed to fetch user: " . $e->getMessage()]; 
         }
     }
+
+ 
     
     
-    
- /**
- * UPDATE OR INSERT USER PROFILE
- */
-public function updateOrInsertProfile($userId, $firstName, $lastName, $contactNumber, $email, $password, $profilePictureBlob, $coverPhotoBlob) {
-    $query = "UPDATE users SET 
-                 first_name = ?, 
-                 last_name = ?, 
-                 contact_number = ?, 
-                 email = ?, 
-                 password = ?, 
-                 profile_picture = ?, 
-                 cover_photo = ?, 
-                 updated_at = CURRENT_TIMESTAMP 
-               WHERE id = ?";
-    
-    $stmt = $this->conn->prepare($query);
-    $stmt->bind_param('sssssssi', $firstName, $lastName, $contactNumber, $email, $password, $profilePictureBlob, $coverPhotoBlob, $userId);
-    
-    return $stmt->execute();
-    
+    /**
+     * UPDATE OR INSERT USER PROFILE
+     */
+    public function updateOrInsertProfile($userId, $firstName = null, $lastName = null, $contactNumber = null, $email = null, $password = null, $profilePictureBlob = null, $coverPhotoBlob = null) {
+        $fields = [];
+        $params = [];
+        $types = '';
+
+        if (!is_null($firstName)) {
+            $fields[] = "first_name = ?";
+            $params[] = $firstName;
+            $types .= 's';
+        }
+        if (!is_null($lastName)) {
+            $fields[] = "last_name = ?";
+            $params[] = $lastName;
+            $types .= 's';
+        }
+        if (!is_null($contactNumber)) {
+            $fields[] = "contact_number = ?";
+            $params[] = $contactNumber;
+            $types .= 's';
+        }
+        if (!is_null($email)) {
+            $fields[] = "email = ?";
+            $params[] = $email;
+            $types .= 's';
+        }
+        if (!is_null($password)) {
+            $fields[] = "password = ?";
+            $params[] = password_hash($password, PASSWORD_DEFAULT);
+            $types .= 's';
+        }
+        if (!is_null($profilePictureBlob)) {
+            $fields[] = "profile_picture = ?";
+            $params[] = $profilePictureBlob;
+            $types .= 's';
+        }
+        if (!is_null($coverPhotoBlob)) {
+            $fields[] = "cover_photo = ?";
+            $params[] = $coverPhotoBlob;
+            $types .= 's';
+        }
+
+        if (empty($fields)) {
+            return "No fields to update.";
+        }
+
+        $query = "UPDATE users SET " . implode(", ", $fields) . " WHERE id = ?";
+        $params[] = $userId;
+        $types .= 'i';
+
+        try {
+            $stmt = $this->conn->prepare($query);
+            if (!$stmt) {
+                throw new Exception("DB Err: " . $this->conn->error);
+            }
+
+            $stmt->bind_param($types, ...$params);
+
+            if ($stmt->execute()) {
+                return "Profile updated successfully.";
+            } else {
+                return "Update failed. Please try again.";
+            }
+
+        } catch (Exception $e) {
+            return "Error: " . $e->getMessage();
+        }
     }
+
 
 
     
