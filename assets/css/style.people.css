@@ -1,0 +1,143 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffe6f0;
+    color: #333;
+}
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 20%;
+    background-color: #ffb6c1;
+    padding: 20px;
+}
+.sidebar-logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+}
+.sidebar-nav {
+    list-style-type: none;
+}
+.sidebar-nav li {
+    margin-bottom: 15px;
+}
+.sidebar-nav a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.sidebar-nav a.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.sidebar-nav .icon {
+    margin-right: 10px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+.page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #ff6680;
+}
+
+.search-box {
+    margin-bottom: 20px;
+}
+.search-box input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.friend-requests-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.friend-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 15px;
+    text-align: center;
+}
+.friend-avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.friend-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #ff5f7e;
+}
+.friend-mutual {
+    font-size: 14px;
+    color: #888;
+    margin: 5px 0 10px;
+}
+.confirm-btn {
+    background-color: #ff69b4;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.confirm-btn:hover {
+    background-color: #ff2f5a;
+}
+
+.right-sidebar {
+    width: 20%;
+    background-color: #ffb6c1;
+    padding: 20px;
+}
+.online-title {
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.online-list {
+    list-style-type: none;
+    color: #fff;
+    padding-left: 0;
+}
+.online-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.online-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #00ff00;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.alert {
+    background-color: #fff3f5;
+    border: 1px solid #fcbac2;
+    color: #d9534f;
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 1rem;
+}

@@ -11,18 +11,21 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+
+$user_id = $_GET['user_id'] ?? $_SESSION['user_id'];
+
 $userModel = new User();
-$user = $userModel->getUserById($_SESSION['user_id']);
+$user = $userModel->getUserById($user_id);
 
 if (!$user) {
     $_SESSION['error'] = "<p>User not found.</p>";
+    header("Location: ../public/index.php");
     exit();
 }
 
 function blobToBase64($blob) {
     return base64_encode($blob);
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,9 +40,7 @@ function blobToBase64($blob) {
     <link rel="stylesheet" href="../assets/css/style.profile.css">
 </head>
 <body>
-  
-
-<?php include('header.php'); ?>
+    <?php include('header.php'); ?>
 
     <!-- Profile Section -->
     <div class="container mt-4">
@@ -90,18 +91,17 @@ function blobToBase64($blob) {
         </div>
 
         <div class="row">
-        <?php
-            $allowedPages = ['profile', 'account'];
-            $page = $_GET['page'] ?? 'profile';
-            $page = in_array($page, $allowedPages, true) ? $page : 'profile';
-            include "pages/$page.php";
-        ?>
+            <?php
+                $allowedPages = ['posts', 'account', 'photos', 'videos'];
+                $page = $_GET['page'] ?? 'posts';
+                $page = in_array($page, $allowedPages, true) ? $page : 'posts';
+                include "pages/$page.php";
+            ?>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
         window.addEventListener('load', function() {
             <?php if (isset($_SESSION['message'])): ?>
                 showToast("<?= htmlspecialchars($_SESSION['message']) ?>");
