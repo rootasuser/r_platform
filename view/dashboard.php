@@ -203,7 +203,7 @@ function sendMessage($message, $senderId, $recipientId) {
                     <div class="card-body">
                         <div class="createPost mb-4">
                             <div class="post-text position-relative mb-4">
-                                <img src="data:image/jpeg;base64,<?php echo blobToBase64($user['profile_picture']); ?>" alt="user" class="rounded-circle position-absolute left-0 top-0 mt-3 ml-3" width="40">
+                                <img src="data:image/jpeg;base64,<?php echo blobToBase64($user['profile_picture']); ?>" alt="user" class="rounded-circle position-absolute left-0 top-0 mt-3 ml-3" width="40" height="40">
                                 <input type="text" class="form-control" placeholder="What's on your mind, <?= htmlspecialchars($user['first_name']) ?>">
                             </div>
 
@@ -227,7 +227,7 @@ function sendMessage($message, $senderId, $recipientId) {
                                 </div>
                                 <div class="fb-p1-main">
                                     <div class="post-title d-flex flex-wrap mb-4">
-                                        <img src="images/user2.jpg" alt="user picture" class="rounded-circle mr-3 mb-3" width="50">
+                                        <img src="images/user2.jpg" alt="user picture" class="rounded-circle mr-3 mb-3" width="40" height="40">
                                         <div class="flex-grow-1">
                                             <ul class="list-unstyled">
                                                 <li class="mb-1">
@@ -293,7 +293,7 @@ function sendMessage($message, $senderId, $recipientId) {
                             <ul class="list-unstyled">
                                 <?php foreach ($activeUsers as $user): ?>
                                 <li class="d-flex align-items-center mb-3 p-2 bg-light rounded user-card" data-user-id="<?= $user['id'] ?>" data-user-name="<?= $user['first_name'] . ' ' . $user['last_name'] ?>" data-user-status="<?= $user['status'] ?>">
-                                    <img src="data:image/jpeg;base64,<?= blobToBase64($user['profile_picture']) ?>" alt="user" class="rounded-circle mr-3" width="42">
+                                    <img src="data:image/jpeg;base64,<?= blobToBase64($user['profile_picture']) ?>" alt="user" class="rounded-circle mr-3" width="40" height="40">
                                     <div class="flex-grow-1">
                                         <h5 class="mb-0"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h5>
                                         <small class="<?= $user['status'] == 'Active' ? 'text-success' : 'text-muted' ?>"><?= htmlspecialchars($user['status']) ?></small>
@@ -308,7 +308,7 @@ function sendMessage($message, $senderId, $recipientId) {
 
                 <div id="conversationModal" class="conversation-modal">
                     <div class="custom-modal-content">
-                        <div class="custom-modal-header">
+                        <div class="custom-modal-header" style="background-color: pink; color: #fff;">
                             <h5 id="modalUserName">Chat with User</h5>
                             <span class="close" onclick="closeModal()">&times;</span>
                         </div>
@@ -319,7 +319,7 @@ function sendMessage($message, $senderId, $recipientId) {
                                 <input type="text" id="messageInput" placeholder="Type a message...">
                                 <input type="hidden" id="senderId" value="<?= $_SESSION['user_id'] ?>">
                                 <input type="hidden" id="recipientId" value="">
-                                <button class="custom-button" onclick="sendMessage()">Send</button>
+                                <button class="custom-button" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                             </div>
                         </div>
                     </div>
