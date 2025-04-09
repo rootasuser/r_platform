@@ -187,7 +187,7 @@ class User {
             }
 
         } catch (Exception $e) {
-            return "Error: " . $e->getMessage();
+            return "Err: " . $e->getMessage();
         }
     }
 

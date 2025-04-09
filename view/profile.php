@@ -26,6 +26,40 @@ if (!$user) {
 function blobToBase64($blob) {
     return base64_encode($blob);
 }
+
+function getFriendCount($conn, $userId) {
+    try {
+        $query = "SELECT COUNT(*) AS friend_count 
+                  FROM friends 
+                  WHERE user_id = ? OR friend_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $userId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        return $row['friend_count'];
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+function getFollowerCount($conn, $userId) {
+    try {
+        $query = "SELECT COUNT(*) AS follower_count 
+                  FROM friend_requests 
+                  WHERE receiver_id = ? AND status = 'friends'";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        return $row['follower_count'];
+    } catch (Exception $e) {
+        return 0;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,18 +67,16 @@ function blobToBase64($blob) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>R Connect</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.profile.css">
 </head>
 <body>
     <?php include('header.php'); ?>
 
-    <!-- Profile Section -->
+ 
     <div class="container mt-4">
-        <!-- Profile Header -->
+
         <div class="row">
             <div class="col-md-12">
                 <div class="profile-cover">
@@ -62,7 +94,8 @@ function blobToBase64($blob) {
                         <div class="ms-3">
                             <h1 class="profile-name text-white"><?= htmlspecialchars($user['first_name']) ?> <?= htmlspecialchars($user['last_name']) ?></h1>
                             <div class="profile-stats">
-                                <span>3.4K followers</span> · <span>456 Friends</span>
+                                <span><?= getFriendCount($conn, $user['id']) ?> followers</span> · 
+                                <span><?= getFriendCount($conn, $user['id']) ?> friends</span>
                             </div>
                         </div>
                     </div>
@@ -70,7 +103,7 @@ function blobToBase64($blob) {
             </div>
         </div>
 
-        <!-- Profile Navigation -->
+
         <div class="row">
             <div class="col-md-12">
                 <ul class="nav profile-tabs">

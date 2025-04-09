@@ -20,23 +20,23 @@ $loggedInUserId = $_SESSION['user_id'];
         <div class="d-flex align-items-center justify-content-between">
             <div class="logoBox">
                 <a href="dashboard.php">
-                    <img src="" alt="logo">
+                    <img src="../assets/logo/R.png" alt="logo" width="40" height="40" class="rounded-circle">
                 </a>
             </div>
             <div class="searchBox d-flex align-items-center">
-                <input id="searchInput" type="search" class="form-control rounded-pill" placeholder="Search R Connect">
+                <!-- <input id="searchInput" type="search" class="form-control rounded-pill" placeholder="Search R Connect"> -->
             </div>
             <div class="iconBox1 d-flex">
                 <a href="dashboard.php">
                     <i class="fa-solid fa-house mx-3"></i>
                 </a>
-                <a href="page?=video">
+                <a href="video.php">
                     <i class="fa-solid fa-video mx-3"></i>
                 </a>
                 <a href="people.php">
                     <i class="fa-solid fa-user-plus mx-3"></i>
                 </a>
-                <a href="#">
+                <a href="notification.php">
                     <i class="fa-solid fa-bell mx-3"></i>
                 </a>
             </div>
@@ -56,11 +56,10 @@ $loggedInUserId = $_SESSION['user_id'];
     </div>
 </header>
 
-<!-- Container for displaying search results -->
 <div id="searchResults" class="container mt-3"></div>
 
 <script>
-    // Initialize Bootstrap dropdown (if needed)
+  
     document.addEventListener('DOMContentLoaded', function() {
         var dropdownToggle = document.querySelector('[data-bs-toggle="dropdown"]');
         if (dropdownToggle) {
@@ -68,12 +67,10 @@ $loggedInUserId = $_SESSION['user_id'];
         }
     });
 
-    // Search functionality: listen for input events and fetch search results from search.php
     document.getElementById('searchInput').addEventListener('input', function () {
         const query = this.value.trim();
         const resultsContainer = document.getElementById('searchResults');
 
-        // Clear results if input is empty
         if (query.length === 0) {
             resultsContainer.innerHTML = '';
             return;

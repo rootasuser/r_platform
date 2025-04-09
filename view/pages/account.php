@@ -2,18 +2,15 @@
 require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../../model/User.php';
 
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirect to login if user is not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../public/login.php");
     exit();
 }
 
-// Initialize user model and get user data
 $userModel = new User();
 $user = $userModel->getUserById($_SESSION['user_id']);
 

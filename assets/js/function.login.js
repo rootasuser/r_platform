@@ -1,17 +1,20 @@
-const modal = document.getElementById("createAccountModal");
-const openModalBtn = document.getElementById("create-account-btn");
-const closeModalBtn = document.getElementById("closeModal");
+document.addEventListener("DOMContentLoaded", function() {
+  const createAccountBtn = document.getElementById("create-account-btn");
+  const createAccountModal = document.getElementById("createAccountModal");
+  const closeModalBtn = document.getElementById("closeModal");
 
-openModalBtn.onclick = () => {
-  modal.style.display = "flex";
-};
+  createAccountBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    createAccountModal.style.display = "block";
+  });
 
-closeModalBtn.onclick = () => {
-  modal.style.display = "none";
-};
+  closeModalBtn.addEventListener("click", function() {
+    createAccountModal.style.display = "none";
+  });
 
-window.onclick = (event) => {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-};
+  window.addEventListener("click", function(e) {
+    if (e.target === createAccountModal) {
+      createAccountModal.style.display = "none";
+    }
+  });
+});

@@ -20,7 +20,6 @@ if (isset($_GET['q'])) {
     $q = $_GET['q'];
     $qParam = "%" . $q . "%";
     
-    // Prepare query: search by first name, last name, or full name
     $stmt = $conn->prepare("
         SELECT id, first_name, last_name, profile_picture 
         FROM users 

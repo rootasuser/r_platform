@@ -1,26 +1,24 @@
-/* Style for the modal */
+
 .conversation-modal {
     position: fixed;
-    bottom: 20px;  /* Position it near the bottom */
-    right: 20px;   /* Position it near the right side */
-    width: 300px;  /* Set the width of the modal */
-    height: 400px; /* Set the height of the modal */
+    bottom: 20px;  
+    right: 20px;   
+    width: 300px;  
+    height: 400px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none; /* Hide the modal initially */
-    z-index: 1000; /* Make sure it's on top of other content */
+    display: none; 
+    z-index: 1000; 
     overflow: hidden;
 }
 
-/* Modal content styles */
 .custom-modal-content {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-/* Modal header */
 .custom-modal-header {
     background-color: pink;
     color: white;
@@ -31,35 +29,31 @@
     align-items: center;
 }
 
-/* Close button in the modal */
 .close {
     font-size: 20px;
     cursor: pointer;
     color: white;
 }
 
-/* Modal body (where messages will be shown) */
 .custom-modal-body {
     flex-grow: 1;
     padding: 10px;
-    overflow-y: auto; /* Allow scrolling if the messages overflow */
+    overflow-y: auto; 
+    height: 200px;
 }
 
-/* Message box where messages will appear */
 .messages-box {
-    max-height: 300px; /* Limit height for scrolling */
+    max-height: 300px; 
     overflow-y: scroll;
     padding: 5px;
 }
 
-/* Message input area */
 .message-input {
     display: flex;
     padding: 10px;
     border-top: 1px solid #ddd;
 }
 
-/* Message input field */
 #messageInput {
     flex-grow: 1;
     padding: 8px;
