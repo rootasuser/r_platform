@@ -79,7 +79,7 @@ $loggedInUserId = $_SESSION['user_id'];
         fetch(`search.php?q=${encodeURIComponent(query)}`)
             .then(response => response.text())
             .then(text => {
-                console.log("Raw response:", text);
+                // console.log("Raw res:", text);
                 try {
                     const data = JSON.parse(text);
                     resultsContainer.innerHTML = '';
@@ -97,13 +97,16 @@ $loggedInUserId = $_SESSION['user_id'];
                         resultsContainer.innerHTML = '<p>No users found.</p>';
                     }
                 } catch (e) {
-                    console.error("Error parsing JSON:", e);
-                    resultsContainer.innerHTML = '<p>An error occurred while processing search results.</p>';
+                    // console.error("Err parsing JSON:", e);
+                    resultsContainer.innerHTML = '<p>Err occur processing search results.</p>';
                 }
             })
             .catch(err => {
-                console.error('Error fetching search results:', err);
-                resultsContainer.innerHTML = '<p>An error occurred while searching.</p>';
+                // console.error('Err fetching search results:', err);
+                resultsContainer.innerHTML = '<p>An err occur searching.</p>';
             });
     });
+    document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
 </script>

@@ -87,7 +87,7 @@ function handleProfileUpdate() {
     if ($updateSuccess) {
         setMessage("Profile updated successfully!");
     } else {
-        setMessage("There was an error updating your profile.");
+        setMessage("Err updating your profile.");
     }
 }
 
@@ -114,7 +114,7 @@ function handleFileUpload($file) {
         
         $fileBlob = file_get_contents($file['tmp_name']);
         if ($fileBlob === false) {
-            setMessage("Error reading file.");
+            setMessage("Err read file.");
             return false;
         }
         
@@ -253,7 +253,7 @@ function setMessage($message) {
                 });
             }
         });
-
+        
         window.addEventListener('load', function() {
             <?php if (isset($_SESSION['message'])): ?>
                 showToast("<?= htmlspecialchars($_SESSION['message']) ?>");
@@ -285,6 +285,9 @@ function setMessage($message) {
                 }, 500);
             }, 5000);
         }
+        document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
     </script>
 </body>
 </html>        

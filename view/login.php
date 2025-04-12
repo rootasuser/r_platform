@@ -1,53 +1,15 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../controller/AuthController.php';
-?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } require_once __DIR__ . '/../controller/AuthController.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>R Portal</title>
+  <!-- <link rel="stylesheet" type="text/css" href="../assets/css/style.login.css"> -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/style.toast.css">
-  <style>
-    body {
-      background-color: pink;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .login-container {
-      background: #ffb5c0;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      max-width: 400px;
-      width: 100%;
-    }
-    .modal-dialog {
-      max-width: 450px;
-    }
 
-    .modal-content {
-      background-color: #fff;
-      border-radius: 10px;
-      width: 100%;
-    }
-    .form-group input {
-      border-radius: 5px;
-    }
-    .login-btn {
-      width: 100%;
-      background-color: #ff69b4;
-      color: white;
-    }
-  
-  </style>
 </head>
 <body>
 <div id="toast-container" class="toast-container"></div>
@@ -147,6 +109,6 @@ require_once __DIR__ . '/../controller/AuthController.php';
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/function.login.js"></script>
 <script src="../assets/js/function.toast.js"></script>
-
+<script src="../assets/js/login.style.js"></script>
 </body>
 </html>

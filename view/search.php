@@ -29,7 +29,7 @@ if (isset($_GET['q'])) {
     ");
     
     if (!$stmt) {
-        echo json_encode(["success" => false, "error" => "Error preparing statement: " . $conn->error]);
+        echo json_encode(["success" => false, "error" => "Err prepare statement: " . $conn->error]);
         exit();
     }
     

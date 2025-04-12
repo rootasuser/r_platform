@@ -38,7 +38,7 @@ try {
     $result = $stmt->get_result();
 
     if ($result === false) {
-        throw new Exception("Error executing query: " . $conn->error);
+        throw new Exception("Err Exec query: " . $conn->error);
     }
 
     $user = $result->fetch_assoc();
@@ -68,12 +68,12 @@ try {
     $result = $stmt->get_result();
 
     if ($result === false) {
-        throw new Exception("Error executing query: " . $conn->error);
+        throw new Exception("Err exec query: " . $conn->error);
     }
 
     $posts = $result->fetch_all(MYSQLI_ASSOC);
 } catch (Exception $e) {
-    die("Error: " . $e->getMessage());
+    die("Err: " . $e->getMessage());
 }
 
 $conn->close();
@@ -106,7 +106,7 @@ function likePost($postId, $userId, $conn) {
             'liked' => $liked
         ];
     } catch (Exception $e) {
-        return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        return ['success' => false, 'message' => 'Err: ' . $e->getMessage()];
     }
 }
 
@@ -164,102 +164,8 @@ function getSharesCount($postId, $conn) {
     <meta charset="UTF-8">
     <title>User Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../assets/js/profile.view.style.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <style>
-        .profile-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .profile-info {
-            margin-left: 20px;
-        }
-        .profile-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-        .status-active {
-            background-color: #28a745;
-            color: white;
-        }
-        .status-offline {
-            background-color: #6c757d;
-            color: white;
-        }
-        .post-card {
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            padding: 15px;
-        }
-        .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-        }
-        .post-content {
-            margin-bottom: 10px;
-        }
-        .post-image {
-            max-width: 100%;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .post-video {
-            width: 100%;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .post-footer {
-            display: flex;
-            justify-content: space-between;
-            color: #6c757d;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-        .post-actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        .post-action-btn {
-            background: none;
-            border: none;
-            color: #6c757d;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .post-action-btn:hover {
-            color: #007bff;
-        }
-        .navbar-custom {
-            background-color: #f8f9fa;
-            padding: 10px 20px;
-        }  
-    </style>
 </head>
 <body>
 <nav class="navbar navbar-custom">

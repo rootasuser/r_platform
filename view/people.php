@@ -93,7 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && isset($_P
     try {
         $conn->begin_transaction();
 
-        // Update the friend request status to "friends" if accepted
         $newStatus = $action === 'accepted' ? 'friends' : 'cancelled';
         $query = "UPDATE friend_requests SET status = ? WHERE id = ? AND receiver_id = ?";
         $stmt = $conn->prepare($query);
@@ -102,7 +101,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && isset($_P
 
         if ($stmt->affected_rows > 0) {
             if ($action === 'accepted') {
-                // Fetch the friend request details
                 $requestQuery = "SELECT sender_id, receiver_id FROM friend_requests WHERE id = ?";
                 $requestStmt = $conn->prepare($requestQuery);
                 $requestStmt->bind_param("i", $requestId);
@@ -111,7 +109,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && isset($_P
                 $friendRequest = $requestResult->fetch_assoc();
 
                 if ($friendRequest) {
-                    // Add to friends table
                     $friendsQuery = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?), (?, ?)";
                     $friendsStmt = $conn->prepare($friendsQuery);
                     $friendsStmt->bind_param("iiii", 
@@ -678,6 +675,10 @@ foreach ($activeUsers as $user) {
         });
     }
 });
+
+document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
 </script>
 </body>
 </html>

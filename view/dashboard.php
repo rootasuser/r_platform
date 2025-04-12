@@ -1,25 +1,26 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 require_once __DIR__ . '/../config/Database.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
-}
-$db = new Database();
-$conn = $db->getConnection();
+if (!isset($_SESSION['user_id'])) 
+    {
+        header("Location: index.php");
+        exit();
+    }
 
-require_once __DIR__ . '/../model/User.php';
-$userModel = new User();
-$user = $userModel->getUserById($_SESSION['user_id']);
+    $db = new Database();
+    $conn = $db->getConnection();
 
-if (!$user || isset($user['error'])) {
-    echo "<p>User not found.</p>";
-    exit();
-}
+    require_once __DIR__ . '/../model/User.php';
+    require_once __DIR__ . '/../model/DashboardModel.php';
+    $userModel = new User();
+    $user = $userModel->getUserById($_SESSION['user_id']);
+
+    if (!$user || isset($user['error'])) {
+        echo "<p>User not found.</p>";
+        exit();
+    }
 
 function blobToBase64($blob) {
     return base64_encode($blob);
@@ -31,14 +32,14 @@ function getActiveUsers($conn) {
         $stmt = $conn->prepare($query);
 
         if ($stmt === false) {
-            throw new Exception("Error preparing statement: " . $conn->error);
+            throw new Exception("Err P.S: " . $conn->error);
         }
 
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result === false) {
-            throw new Exception("Error executing query: " . $conn->error);
+            throw new Exception("Err E.Q: " . $conn->error);
         }
 
         $users = [];
@@ -48,7 +49,7 @@ function getActiveUsers($conn) {
 
         return $users;
     } catch (Exception $e) {
-        return ['error' => 'Database error: ' . $e->getMessage()];
+        return ['error' => 'DB Err: ' . $e->getMessage()];
     }
 }
 
@@ -283,7 +284,7 @@ function getAllPosts($conn) {
 
         return $posts;
     } catch (Exception $e) {
-        return ['error' => 'Database error: ' . $e->getMessage()];
+        return ['error' => 'DB Err: ' . $e->getMessage()];
     }
 }
 function timeAgo($timestamp) {
@@ -486,11 +487,8 @@ function getPostSharesCount($conn, $postId) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <title>R Connect</title>
-    <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="../assets/node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/style.dashboard.css">
     <link rel="stylesheet" href="../assets/css/style.modal2.css">
     <link rel="stylesheet" href="../assets/css/style.comment-box.css">
@@ -511,10 +509,8 @@ function getPostSharesCount($conn, $postId) {
         </div>
     </div>
 
-    <!-- home section start -->
-    <div class="container mt-4">
-        <div class="row">
-           <!-- home left start here -->
+<div class="container mt-4">
+    <div class="row">
 <div class="col-md-3">
     <div class="card mb-4">
         <div class="card-body">
@@ -673,7 +669,7 @@ function getPostSharesCount($conn, $postId) {
                                     })
                                     .then(response => {
                                         if (!response.ok) {
-                                            throw new Error('Network response was not ok');
+                                            throw new Error('Network responsenot ok');
                                         }
                                         return response.text();
                                     })
@@ -693,16 +689,16 @@ function getPostSharesCount($conn, $postId) {
                                                 document.getElementById('imagePreview').style.display = 'none';
                                                 document.getElementById('videoPreview').style.display = 'none';
                                             } else {
-                                                alert('Error submitting post: ' + data.error);
+                                                alert('Err submitting post: ' + data.error);
                                             }
                                         } catch (e) {
-                                            console.error('Error parsing JSON:', e);
+                                            console.error('Err parsing JSON:', e);
                                             alert('Failed to parse server response.');
                                         }
                                     })
                                     .catch(error => {
-                                        console.error('Error:', error);
-                                        alert('An error occurred while submitting the post.');
+                                        console.error('Err:', error);
+                                        alert('An err ocur submitting the post.');
                                     });
                                 });
                             });
@@ -811,7 +807,6 @@ function getPostSharesCount($conn, $postId) {
                 </div>
             </div>
 
-            <!-- home right start here -->
             <div class="col-md-3">
                 <div class="card mb-4">
                     <div class="card-body">
@@ -883,8 +878,8 @@ function getPostSharesCount($conn, $postId) {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while liking the post.');
+                        // console.error('Err:', error);
+                        alert('An err occour liking the post.');
                     });
                 });
             });
@@ -914,8 +909,8 @@ function getPostSharesCount($conn, $postId) {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while unliking the post.');
+                        // console.error('Err:', error);
+                        alert('Err occur unliking the post.');
                     });
                 });
             });
@@ -959,16 +954,15 @@ function getPostSharesCount($conn, $postId) {
                             const commentsCountSpan = document.querySelector(`.comments-count-${postId}`);
                             const commentsCount = parseInt(commentsCountSpan.textContent);
                             commentsCountSpan.textContent = commentsCount + 1;
-                            
-                            // Reload comments
+                        
                             location.reload();
                         } else {
                             alert(data.error);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while posting the comment.');
+                        // console.error('Err:', error);
+                        alert('An err occur posting comment.');
                     });
                 });
             });
@@ -997,8 +991,8 @@ function getPostSharesCount($conn, $postId) {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while sharing the post.');
+                        // console.error('Err:', error);
+                        alert('Err occur sharing post.');
                     });
                 });
             });
@@ -1006,7 +1000,9 @@ function getPostSharesCount($conn, $postId) {
            
             });
 
-        
+            document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
             
     </script>
 

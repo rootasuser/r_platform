@@ -79,7 +79,7 @@ function getPostActivities($conn, $userId) {
 
         return $activities;
     } catch (Exception $e) {
-        return ['error' => 'Database error: ' . $e->getMessage()];
+        return ['error' => 'DB Err: ' . $e->getMessage()];
     }
 }
 
@@ -96,7 +96,7 @@ function timeAgo($datetime) {
     
     $diff = time() - $datetime;
     
-    if ($diff < 0) {  // Future date
+    if ($diff < 0) { 
         $absDiff = abs($diff);
         if ($absDiff < 60) {
             return '1 minute from now';
@@ -129,40 +129,9 @@ $activities = getPostActivities($conn, $userId);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Activities</title>
+    <script src="../assets/js/notif.style.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <style>
-        .activity-item {
-            border-bottom: 1px solid #dee2e6;
-            padding: 15px 0;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .activity-header img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .activity-content {
-            margin-left: 50px;
-        }
-
-        .activity-time {
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-    </style>
 </head>
 <body>
 

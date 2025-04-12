@@ -73,8 +73,6 @@ function getFollowerCount($conn, $userId) {
 </head>
 <body>
     <?php include('header.php'); ?>
-
- 
     <div class="container mt-4">
 
         <div class="row">
@@ -167,6 +165,9 @@ function getFollowerCount($conn, $userId) {
                 }, 500);
             }, 5000);
         }
+        document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
     </script>
 </body>
 </html>

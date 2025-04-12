@@ -38,7 +38,7 @@ function getAllUserPhotos($conn, $userId) {
 
         return $photos;
     } catch (Exception $e) {
-        return ['error' => 'Database error: ' . $e->getMessage()];
+        return ['error' => 'DB Err: ' . $e->getMessage()];
     }
 }
 
@@ -143,6 +143,9 @@ $photos = getAllUserPhotos($conn, $userId);
                 });
             });
         });
+        document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
     </script>
 </body>
 </html>

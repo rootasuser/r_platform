@@ -32,7 +32,7 @@ function getAllVideos($conn) {
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     } catch (Exception $e) {
-        return ['error' => 'Database error: ' . $e->getMessage()];
+        return ['error' => 'DB Err: ' . $e->getMessage()];
     }
 }
 
@@ -78,30 +78,16 @@ function timeAgo($datetime) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Videos</title>
-    <!-- Bootstrap 5 CSS -->
+    <script src="../assets/js/video.style.js"></script>
     <link rel="stylesheet" href="../assets/node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../assets/css/style.dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <style>
-        .carousel-item {
-            height: 400px;
-        }
-        .carousel-caption {
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        .navbar-custom {
-            background-color: #f8f9fa;
-            padding: 10px 20px;
-        }   
-    </style>
 </head>
 <body>
 
 <nav class="navbar navbar-custom">
-    <span class="navbar-brand mb-0 h1">R</span>
-    <button class="btn btn-outline-secondary ml-auto" type="button" onclick="window.history.back();">
+    <span class="navbar-brand mb-0 h1 mx-5">R</span>
+    <button class="btn btn-outline-secondary ml-auto mx-2" type="button" onclick="window.history.back();">
       <i class="fa fa-arrow-left"></i> Back
     </button>
   </nav>
