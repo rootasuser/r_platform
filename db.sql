@@ -1,4 +1,4 @@
-
+-- FOR TESTING ONLY :) --
 CREATE DATABASE IF NOT EXISTS r_platform;
 USE r_platform;
 
